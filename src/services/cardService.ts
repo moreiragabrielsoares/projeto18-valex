@@ -1,18 +1,15 @@
 import dayjs from 'dayjs';
 import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
-import * as cardRepository from '../repositories/cardRepository'
+import bcrypt from 'bcrypt';
+import * as cardRepository from '../repositories/cardRepository';
 
 dotenv.config();
 
-
 export async function getAllCards () {
-
     const allCards = await cardRepository.find();
-
     return allCards;
 }
-
 
 async function checkDuplicateCard (cardType: cardRepository.TransactionTypes, employeeId: number) {
 
@@ -21,15 +18,11 @@ async function checkDuplicateCard (cardType: cardRepository.TransactionTypes, em
     if (checkCard) {
         throw {code: 'Conflict' , message: 'Card already exists'};
     }
-
-    return null;
-
+    return;
 }
 
 function generateExpirationDate() {
-    
     const expirationDate = dayjs(Date.now()).add(5, 'year').format('MM/YY');
-    
     return expirationDate;
 }
 
@@ -77,6 +70,57 @@ export async function createCard (employeeId: number, cardType: cardRepository.T
     };
     
     await cardRepository.insert(cardData);
+    return;
+}
+
+
+
+function checkIsCardExpired(expirationDate: string) {
+    const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear();
+    const expirationMonth = parseInt(expirationDate.substring(0,2)); //expirationDate = "MM/YY"
+    const expirationYear = 2000 + parseInt(expirationDate.substring(3,5));
+    return ((currentYear > expirationYear) || (currentYear === expirationYear && currentMonth > expirationMonth));
+}
+
+function checkCvvNumber(encryptedCvvNumber: string, cardCvv: string) {
+    const decryptedCvvNumber = decryptCvvNumber(encryptedCvvNumber);
+    return (cardCvv === decryptedCvvNumber);
+}
+
+function encryptPassword(password: string) {
+    const encryptedPassword = bcrypt.hashSync(password, 10);
+    return encryptedPassword;
+}
+
+export async function checkCardbyId (cardId: number, cardCvv: string) {
+
+    const card = await cardRepository.findById(cardId);
+
+    if (!card) {
+        throw {code: 'NotFound' , message: 'Invalid cardId'};
+    }
+
+    if (!checkCvvNumber(card.securityCode, cardCvv)) {
+        throw {code: 'Unauthorized' , message: 'Invalid credentials'}
+    }
+
+    if (checkIsCardExpired(card.expirationDate)) {
+        throw {code: 'Unprocessable' , message: 'Expired card'};
+    }
+
+    if (card.password) {
+        throw {code: 'Unprocessable' , message: 'Card already activated'};
+    }
+
+    return;
+}
+
+export async function activateCard (cardId: number, password:string) {
+
+    const encryptedPassword = encryptPassword(password);
+
+    await cardRepository.update(cardId, {password: encryptedPassword});
 
     return;
 }
