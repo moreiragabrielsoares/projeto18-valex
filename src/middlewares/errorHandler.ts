@@ -16,5 +16,13 @@ export default async function errorHandler(error: any, req: Request, res: Respon
         return res.status(409).send(error.message);
     }
 
+    if(error.code === 'Unprocessable') {
+        return res.status(422).send(error.message);
+    }
+
+    if(error.code === 'Unauthorized') {
+        return res.status(401).send(error.message);
+    }
+
     res.sendStatus(500);
 }

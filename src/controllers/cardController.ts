@@ -29,3 +29,16 @@ export async function createCard(req: Request, res: Response) {
     res.status(201).send('Card created');
 
 }
+
+
+export async function activateCard(req: Request, res: Response) {
+
+    const { cardId, cardCvv, password }:{cardId:number, cardCvv:string, password:string} = req.body;
+
+    await cardService.checkCardbyId(cardId, cardCvv);
+
+    await cardService.activateCard(cardId, password);
+
+    res.status(200).send('Card activated');
+
+}
