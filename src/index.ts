@@ -1,7 +1,9 @@
 import express, { json } from 'express';
+import "express-async-errors";
 import cors from 'cors';
 import dotenv from 'dotenv';
-import cardRouter from './router/cardRouter';
+import cardRouter from './routes/cardRouter';
+import errorHandler from './middlewares/errorHandler';
 
 
 const app = express();
@@ -14,6 +16,8 @@ app.use(json());
 app.use(cardRouter);
 
 
+
+app.use(errorHandler);
 
 
 const PORT: number = Number(process.env.PORT) || 5009;
