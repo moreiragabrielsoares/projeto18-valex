@@ -63,3 +63,23 @@ export async function unblockCard(req: Request, res: Response) {
     res.status(200).send('Card unblocked');
 
 }
+
+
+
+export async function reloadCard(req: Request, res: Response) {
+
+    const apiKey = res.locals.apiKey;
+
+    const { cardId, reloadValue }:{ cardId:number, reloadValue: number } = req.body;
+
+    const company = await companyService.companyFindByApiKey(apiKey);
+    
+    const card = await cardService.checkReloadCardById(cardId);
+
+    await employeeService.checkEmployeeCompany(company.id, card.employeeId);
+
+    await cardService.reloadCardById(cardId, reloadValue);
+
+    res.status(200).send('Card reloaded');
+
+}

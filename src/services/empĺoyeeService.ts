@@ -44,3 +44,15 @@ export async function employeeFindById(employeeId: number, companyId: number) {
 
     return {employee, cardholderName};
 }
+
+
+export async function checkEmployeeCompany(companyId: number, employeeId:number) {
+
+    const employee = await employeeRepository.findById(employeeId);
+
+    if (employee.companyId !== companyId) {
+        throw {code: 'Conflict' , message: 'Company and Employee do not match'};
+    }
+
+    return;
+}
