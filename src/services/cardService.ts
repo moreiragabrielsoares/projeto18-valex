@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import * as cardRepository from '../repositories/cardRepository';
-import { string } from 'joi';
+import * as rechargeRepository from '../repositories/rechargeRepository';
 
 dotenv.config();
 
@@ -181,5 +181,36 @@ export async function unblockCard(cardId: number, password: string) {
     }
 
     await cardRepository.update(cardId, {isBlocked: false});
+    return;
+}
+
+
+
+
+export async function checkReloadCardById (cardId: number) {
+
+    const card = await cardRepository.findById(cardId);
+
+    if (!card) {
+        throw {code: 'NotFound' , message: 'Invalid cardId'};
+    }
+
+    if (!card.password) {
+        throw {code: 'Unprocessable' , message: 'Not activated card'};
+    }
+
+    if (checkIsCardExpired(card.expirationDate)) {
+        throw {code: 'Unprocessable' , message: 'Expired card'};
+    }
+
+    return card;
+}
+
+
+export async function reloadCardById (cardId: number, amount: number) {
+
+    const rechargeData = { cardId, amount }
+
+    await rechargeRepository.insert(rechargeData);
     return;
 }
