@@ -3,6 +3,7 @@ import { faker } from '@faker-js/faker';
 import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import * as cardRepository from '../repositories/cardRepository';
+import { string } from 'joi';
 
 dotenv.config();
 
@@ -122,5 +123,63 @@ export async function activateCard (cardId: number, password:string) {
 
     await cardRepository.update(cardId, {password: encryptedPassword});
 
+    return;
+}
+
+
+
+export async function blockCard(cardId: number, password: string) {
+    
+    const card = await cardRepository.findById(cardId);
+
+    if (!card) {
+        throw {code: 'NotFound' , message: 'Invalid cardId'};
+    }
+
+    if (checkIsCardExpired(card.expirationDate)) {
+        throw {code: 'Unprocessable' , message: 'Expired card'};
+    }
+
+    if (card.isBlocked) {
+        throw {code: 'Unprocessable' , message: 'Card already blocked'};
+    }
+
+    if (!card.password) {
+        throw {code: 'Unprocessable' , message: 'Not activated card'};
+    }
+
+    if (!bcrypt.compareSync(password, card.password!)) {
+        throw {code: 'Unauthorized' , message: 'Invalid credentials'};
+    }
+
+    await cardRepository.update(cardId, {isBlocked: true});
+    return;
+}
+
+export async function unblockCard(cardId: number, password: string) {
+    
+    const card = await cardRepository.findById(cardId);
+
+    if (!card) {
+        throw {code: 'NotFound' , message: 'Invalid cardId'};
+    }
+
+    if (checkIsCardExpired(card.expirationDate)) {
+        throw {code: 'Unprocessable' , message: 'Expired card'};
+    }
+
+    if (!card.isBlocked) {
+        throw {code: 'Unprocessable' , message: 'Card already unblocked'};
+    }
+
+    if (!card.password) {
+        throw {code: 'Unprocessable' , message: 'Not activated card'};
+    }
+
+    if (!bcrypt.compareSync(password, card.password!)) {
+        throw {code: 'Unauthorized' , message: 'Invalid credentials'};
+    }
+
+    await cardRepository.update(cardId, {isBlocked: false});
     return;
 }
