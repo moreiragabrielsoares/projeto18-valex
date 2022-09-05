@@ -39,6 +39,7 @@ function generateNewCvvNumber() {
 function encryptCvvNumber(cvvNumber: string) {
     const Cryptr = require('cryptr');
     const cryptr = new Cryptr(process.env.CRYPTR_KEY);
+    console.log(cvvNumber);
     const encryptedCvvNumber = cryptr.encrypt(cvvNumber);
     return encryptedCvvNumber;
 }
