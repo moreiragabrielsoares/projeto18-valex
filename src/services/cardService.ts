@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import bcrypt from 'bcrypt';
 import * as cardRepository from '../repositories/cardRepository';
 import * as rechargeRepository from '../repositories/rechargeRepository';
+import * as paymentRepository from '../repositories/paymentRepository';
 
 dotenv.config();
 
@@ -213,4 +214,57 @@ export async function reloadCardById (cardId: number, amount: number) {
 
     await rechargeRepository.insert(rechargeData);
     return;
+}
+
+
+export async function checkPaymentCardPosById (cardId: number, password: string) {
+
+    const card = await cardRepository.findById(cardId);
+
+    if (!card) {
+        throw {code: 'NotFound' , message: 'Invalid cardId'};
+    }
+
+    if (!card.password) {
+        throw {code: 'Unprocessable' , message: 'Not activated card'};
+    }
+
+    if (checkIsCardExpired(card.expirationDate)) {
+        throw {code: 'Unprocessable' , message: 'Expired card'};
+    }
+
+    if (card.isBlocked) {
+        throw {code: 'Unprocessable' , message: 'Blocked card'};
+    }
+
+    if (!bcrypt.compareSync(password, card.password!)) {
+        throw {code: 'Unauthorized' , message: 'Invalid credentials'};
+    }
+
+    return card;
+}
+
+
+export async function checkCardBalance(cardId: number, amount: number) {
+
+    const payments = await paymentRepository.findByCardId(cardId);
+    const reloads = await rechargeRepository.findByCardId(cardId);
+
+    let totalPayments = 0;
+    let totalReloads = 0;
+
+    for (let i = 0 ; i < payments.length ; i++) {
+        totalPayments += payments[i].amount;
+    }
+
+    for (let j = 0 ; j < reloads.length ; j++) {
+        totalReloads += reloads[j].amount;
+    }
+
+    const cardBalance = totalReloads - totalPayments;
+
+    if (amount > cardBalance) {
+        throw {code: 'Unprocessable' , message: 'Unprocessable value'};
+    }
+
 }
