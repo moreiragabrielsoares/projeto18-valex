@@ -1,8 +1,8 @@
 # projeto18-valex
 
-## Rota POST /create-card
+### Rota POST /create-card
 
-- Rota autenticada: A chave de API deverá ser recebida no header x-api-key
+Rota autenticada: A chave de API deverá ser recebida no header x-api-key
 Espera receber o seguinte objeto:
 {
   "employeeId": 1,
@@ -11,9 +11,9 @@ Espera receber o seguinte objeto:
 OBS: Adicionei um console.log que informará o CVV para facilitar os testes.
 
 
-## Rota PUT /activate-card
+### Rota PUT /activate-card
 
-- Rota não autenticada.
+Rota não autenticada.
 Espera receber o seguinte objeto:
 {
   "cardId": 1, 
@@ -23,9 +23,9 @@ Espera receber o seguinte objeto:
 OBS: Essa rota apenas ativa o cartão, mas o mesmo continuará bloqueado até ser desbloqueado na rota de desbloqueio.
 
 
-## Rota PUT /block-card
+### Rota PUT /block-card
 
-- Rota não autenticada.
+Rota não autenticada.
 Espera receber o seguinte objeto:
 {
   "cardId": 1, 
@@ -33,9 +33,9 @@ Espera receber o seguinte objeto:
 }
 
 
-## Rota PUT /unblock-card
+### Rota PUT /unblock-card
 
-- Rota não autenticada.
+Rota não autenticada.
 Espera receber o seguinte objeto:
 {
   "cardId": 1, 
@@ -43,9 +43,9 @@ Espera receber o seguinte objeto:
 }
 
 
-## Rota POST /reload-card
+### Rota POST /reload-card
 
-- Rota autenticada: A chave de API deverá ser recebida no header x-api-key
+Rota autenticada: A chave de API deverá ser recebida no header x-api-key
 Espera receber o seguinte objeto:
 {
   "cardId": 1, 
@@ -53,9 +53,9 @@ Espera receber o seguinte objeto:
 }
 
 
-## Rota POST /payment-pos
+### Rota POST /payment-pos
 
-- Rota não autenticada.
+Rota não autenticada.
 Espera receber o seguinte objeto:
 {
   "cardId": 1, 
@@ -65,9 +65,9 @@ Espera receber o seguinte objeto:
 }
 
 
-## Rota GET /card-statement
+### Rota GET /card-statement
 
-- Rota não autenticada.
+Rota não autenticada.
 Espera receber o seguinte objeto:
 {
   "cardId": 1, 
