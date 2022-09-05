@@ -18,7 +18,7 @@ Espera receber o seguinte objeto:
 {  
   "cardId": 1,   
   "cardCvv": "999"   
-  "password": “9999”   
+  "password": "9999"   
 }  
 OBS: Essa rota apenas ativa o cartão, mas o mesmo continuará bloqueado até ser desbloqueado na rota de desbloqueio.  
 
@@ -29,7 +29,7 @@ Rota não autenticada.
 Espera receber o seguinte objeto:  
 {  
   "cardId": 1,   
-  "password": “9999”   
+  "password": "9999"   
 }  
 
 
@@ -39,7 +39,7 @@ Rota não autenticada.
 Espera receber o seguinte objeto:  
 {  
   "cardId": 1,   
-  "password": “9999”   
+  "password": "9999"   
 }  
 
 
@@ -59,7 +59,7 @@ Rota não autenticada.
 Espera receber o seguinte objeto:  
 {  
   "cardId": 1,   
-  "password": “9999”,  
+  "password": "9999",  
   "businessId": 1,  
   "amount": 999  
 }  
@@ -71,5 +71,5 @@ Rota não autenticada.
 Espera receber o seguinte objeto:  
 {  
   "cardId": 1,   
-  "password": “9999”  
+  "password": "9999"  
 }  
