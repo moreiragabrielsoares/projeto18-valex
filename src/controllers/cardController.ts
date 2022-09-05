@@ -83,3 +83,15 @@ export async function reloadCard(req: Request, res: Response) {
     res.status(200).send('Card reloaded');
 
 }
+
+
+export async function getCardStatement(req: Request, res: Response) {
+
+    const { cardId, password }:{cardId:number, password:string} = req.body;
+
+    await cardService.checkCardPassword(cardId, password);
+
+    const cardStatement = await cardService.getCardStatement(cardId);
+
+    res.status(200).send(cardStatement);
+}

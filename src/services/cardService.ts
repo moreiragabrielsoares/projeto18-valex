@@ -267,4 +267,49 @@ export async function checkCardBalance(cardId: number, amount: number) {
         throw {code: 'Unprocessable' , message: 'Unprocessable value'};
     }
 
+    return;
+}
+
+
+
+export async function checkCardPassword(cardId: number, password: string) {
+    
+    const card = await cardRepository.findById(cardId);
+
+    if (!card) {
+        throw {code: 'NotFound' , message: 'Invalid cardId'};
+    }
+
+    if (!card.password) {
+        throw {code: 'Unprocessable' , message: 'Not activated card'};
+    }
+
+    if (!bcrypt.compareSync(password, card.password!)) {
+        throw {code: 'Unauthorized' , message: 'Invalid credentials'};
+    }
+
+    return;
+}
+
+export async function getCardStatement(cardId: number) {
+
+    const payments = await paymentRepository.findByCardId(cardId);
+    const reloads = await rechargeRepository.findByCardId(cardId);
+
+    let totalPayments = 0;
+    let totalReloads = 0;
+
+    for (let i = 0 ; i < payments.length ; i++) {
+        totalPayments += payments[i].amount;
+    }
+
+    for (let j = 0 ; j < reloads.length ; j++) {
+        totalReloads += reloads[j].amount;
+    }
+
+    const cardBalance = totalReloads - totalPayments;
+
+    const cardStatement = {balance: cardBalance, transactions: payments, recharges: reloads};
+
+    return cardStatement;
 }
