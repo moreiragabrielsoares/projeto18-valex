@@ -2,12 +2,12 @@
 
 ### Rota POST /create-card
 
-Rota autenticada: A chave de API deverá ser recebida no header x-api-key
-Espera receber o seguinte objeto:
-{
-  "employeeId": 1,
-  "cardType": "transport"
-}
+Rota autenticada: A chave de API deverá ser recebida no header x-api-key  
+Espera receber o seguinte objeto:  
+{  
+  "employeeId": 1,  
+  "cardType": "transport"  
+}  
 OBS: Adicionei um console.log que informará o CVV para facilitar os testes.
 
 
